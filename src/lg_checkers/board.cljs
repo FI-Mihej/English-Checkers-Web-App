@@ -4,6 +4,8 @@
 
 (enable-console-print!)
 
+(println "board - start")
+
 ; == Notes ==============================================
 ; Board pieces are defined in the checkers.css file.  The
 ; currently defined pieces are:
@@ -123,3 +125,5 @@
       (let [command (<! board-commands)]
         (swap! board assoc (:position command)
                            (:piece command)))))
+
+(println "board - end")
