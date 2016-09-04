@@ -27,11 +27,18 @@ td {
 .empty {
 }
 
+.empty-piece {
+	color: white;
+}
+
+/*Normal Pieces:*/
 .red-piece {
 	border-radius: 50%;
 	width: 52px;
 	height: 52px;
 	background: red;
+	color: black;
+	font-weight: bold;
 }
 
 .black-piece {
@@ -39,6 +46,7 @@ td {
 	width: 52px;
 	height: 52px;
 	background: black;
+	color: red;
 }
 
 .prom-red-piece {
@@ -46,6 +54,8 @@ td {
 	width: 52px;
 	height: 52px;
 	background: darkred;
+	color: black;
+	font-weight: bold;
 }
 
 .prom-black-piece {
@@ -53,4 +63,44 @@ td {
 	width: 52px;
 	height: 52px;
 	background: darkslategray;
+	color: red;
+}
+
+/*Marked Pieces*/
+.red-piece-marked {
+	border-radius: 50%;
+	width: 42px;
+	height: 42px;
+	background: red;
+	margin-left: 5px;
+	color: black;
+	font-weight: bold;
+}
+
+.black-piece-marked {
+	border-radius: 50%;
+	width: 42px;
+	height: 42px;
+	background: black;
+	margin-left: 5px;
+	color: red;
+}
+
+.prom-red-piece-marked {
+	border-radius: 50%;
+	width: 42px;
+	height: 42px;
+	background: darkred;
+	margin-left: 5px;
+	color: black;
+	font-weight: bold;
+}
+
+.prom-black-piece-marked {
+	border-radius: 50%;
+	width: 42px;
+	height: 42px;
+	background: darkslategray;
+	margin-left: 5px;
+	color: red;
 }

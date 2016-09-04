@@ -7,27 +7,26 @@
 
 (enable-console-print!)
 
-(println "ui - start")
-
-(def last-click-board-pos)
+(println "UI - start")
 
 ; == UI events ==========================================
 ; when we click a game square, we send an event
 (defn board-click [board-pos]
-  (let [same-board-pos? (== board-pos last-click-board-pos)
-        new-board-pos? (not same-board-pos?)]
-    (println "board-click - start")
-    (if new-board-pos?
-      (do (set! last-click-board-pos board-pos)
-        (println "last-click-board-pos" last-click-board-pos)
-        (put! board-events {:event :board-clicked
-                            :position board-pos})))
-    (println "board-click - end")))
+  (put! board-events {:command :board-clicked
+                      :position board-pos}))
 
 ; == Board UI Drawing ===================================
 ; draw pieces based on the piece-type
-(defn draw-piece [piece-type]
+(defn draw-piece [piece-pos piece-type]
   (apply dom/div #js {:className piece-type} nil))
+
+; == Board UI Drawing ===================================
+; draw pieces based on the piece-type
+(defn draw-piece-with-pos [piece-pos piece-type]
+  (apply dom/div #js {:className piece-type :dangerouslySetInnerHTML #js {:__html (str piece-pos)}} nil))
+
+; (def draw-piece-function draw-piece)
+(def draw-piece-function draw-piece-with-pos)
 
 ; draws pairs of checkerboard squares within a row
 ; depending on if row is odd or even.
@@ -39,9 +38,9 @@
                                   :onClick
                                     (fn [e] (board-click
                                              piece-pos))}
-                                 (draw-piece piece-type))]
+                                 (draw-piece-function piece-pos piece-type))]
     ; (println "")
-    ; (println "draw-tuple - start" piece row-odd?)
+    ; (println ">> UI - draw-tuple - start" piece row-odd?)
     ; (println "piece-type" piece-type)
     ; (println "piece-pos" piece-pos)
     (if row-odd?
@@ -75,7 +74,8 @@
 ; given a checkerboard data structure, partition into
 ; rows and draw the individual rows
 (defn checkerboard [board owner]
-  (println (partition 4 board))
+  (println "")
+  (println ">> UI - checkerboard - partition 4 board:" (partition 4 board))
   (om/component
    (apply dom/table nil
       (map draw-row
@@ -83,7 +83,7 @@
 
 ; == Bootstrap ============================================
 (defn bootstrap-ui []
-  (println board)
+  (println ">> UI - bootstrap-ui - board" board)
   (om/root
     checkerboard ; our UI
     board        ; our game state
@@ -91,4 +91,4 @@
 
 (bootstrap-ui)
 
-(println "ui - end")
+(println "UI - end")
