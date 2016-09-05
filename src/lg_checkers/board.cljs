@@ -582,11 +582,11 @@
   (swap! board assoc pos piece))
 
 ; =====================================================
+; AI
 
 (def original-piece-color-for-ai :red-piece)
 (def movable-piece-colors-for-ai (if (= :red-piece original-piece-color-for-ai) all-red-movable-pieces all-black-movable-pieces))
 
-; AI
 (go (do 
     (println "")
     (println "STARTED: AI")
