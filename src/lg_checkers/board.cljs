@@ -169,24 +169,24 @@
   (map (fn [pos] {pos (compute-pos-neighbors-memo pos)})
        (range 1 33)))
 
-(defn neighbor-piece-by-destination [pos destination]
+(defn neighbor-piece-by-direction [pos direction]
   (let []
     (println "")
-    (println ">> neighbor-piece-by-destination" pos destination)
-    ; (println "(get piece-neighbor-direction-number-by-direction destination) :" (get piece-neighbor-direction-number-by-direction destination))
+    (println ">> neighbor-piece-by-direction" pos direction)
+    ; (println "(get piece-neighbor-direction-number-by-direction direction) :" (get piece-neighbor-direction-number-by-direction direction))
     ; (println "(compute-pos-neighbors-memo pos) :" (to-array (compute-pos-neighbors-memo pos)))
-    ; (println "(get (to-array (compute-pos-neighbors-memo pos)) (get piece-neighbor-direction-number-by-direction destination)) :" (get (to-array (compute-pos-neighbors-memo pos)) (get piece-neighbor-direction-number-by-direction destination)))
-    (get (to-array (compute-pos-neighbors-memo pos)) (get piece-neighbor-direction-number-by-direction destination))
+    ; (println "(get (to-array (compute-pos-neighbors-memo pos)) (get piece-neighbor-direction-number-by-direction direction)) :" (get (to-array (compute-pos-neighbors-memo pos)) (get piece-neighbor-direction-number-by-direction direction)))
+    (get (to-array (compute-pos-neighbors-memo pos)) (get piece-neighbor-direction-number-by-direction direction))
     ))
 
-(defn neighbor-piece-destination-by-neighbor-pos [pos neighbor-pos]
+(defn neighbor-piece-direction-by-neighbor-pos [pos neighbor-pos]
   (let [close-neighbor? (contains? (set (compute-pos-neighbors-memo pos)) neighbor-pos)
-        up-left-neighbor (if (not close-neighbor?) (neighbor-piece-by-destination pos :up-left))
-        up-right-neighbor (if (not close-neighbor?) (neighbor-piece-by-destination pos :up-right))
-        down-left-neighbor (if (not close-neighbor?) (neighbor-piece-by-destination pos :down-left))
-        down-right-neighbor (if (not close-neighbor?) (neighbor-piece-by-destination pos :down-right))]
+        up-left-neighbor (if (not close-neighbor?) (neighbor-piece-by-direction pos :up-left))
+        up-right-neighbor (if (not close-neighbor?) (neighbor-piece-by-direction pos :up-right))
+        down-left-neighbor (if (not close-neighbor?) (neighbor-piece-by-direction pos :down-left))
+        down-right-neighbor (if (not close-neighbor?) (neighbor-piece-by-direction pos :down-right))]
     (println "")
-    (println ">> neighbor-piece-destination-by-neighbor-pos" pos neighbor-pos)
+    (println ">> neighbor-piece-direction-by-neighbor-pos" pos neighbor-pos)
     (println "close-neighbor? :" close-neighbor?)
     (println "up-left-neighbor :" up-left-neighbor)
     (println "up-right-neighbor :" up-right-neighbor)
@@ -195,19 +195,21 @@
     (println "neighbors :" (compute-pos-neighbors-memo pos))
     (if close-neighbor?
       (get piece-neighbor-direction-by-number (.indexOf (to-array (compute-pos-neighbors-memo pos)) neighbor-pos))
-      (if (and (some? up-left-neighbor) (= neighbor-pos (neighbor-piece-by-destination up-left-neighbor :up-left))) :up-left
-        (if (and (some? up-right-neighbor) (= neighbor-pos (neighbor-piece-by-destination up-right-neighbor :up-right))) :up-right
-          (if (and (some? down-left-neighbor) (= neighbor-pos (neighbor-piece-by-destination down-left-neighbor :down-left))) :down-left
-            (if (and (some? down-right-neighbor) (= neighbor-pos (neighbor-piece-by-destination down-right-neighbor :down-right))) :down-right)))))))
+      (if (and (some? up-left-neighbor) (= neighbor-pos (neighbor-piece-by-direction up-left-neighbor :up-left))) :up-left
+        (if (and (some? up-right-neighbor) (= neighbor-pos (neighbor-piece-by-direction up-right-neighbor :up-right))) :up-right
+          (if (and (some? down-left-neighbor) (= neighbor-pos (neighbor-piece-by-direction down-left-neighbor :down-left))) :down-left
+            (if (and (some? down-right-neighbor) (= neighbor-pos (neighbor-piece-by-direction down-right-neighbor :down-right))) :down-right)))))))
 
-(defn good-piece-type-destination? [piece-type destination]
+(defn good-piece-type-direction? [piece-type direction]
   (let [promoted? (contains? all-promoted-movable-pieces piece-type)
         kind-of-black-piece? (contains? all-black-movable-pieces piece-type)]
     (if promoted?
       true
-      (if kind-of-black-piece?
-        (contains? piece-neighbor-directions-black-forward destination)
-        (contains? piece-neighbor-directions-red-forward destination)))))
+      (if (= :empty-piece piece-type)
+        false
+        (if kind-of-black-piece?
+          (contains? piece-neighbor-directions-black-forward direction)
+          (contains? piece-neighbor-directions-red-forward direction))))))
 
 ; == Board State ==========================================
 ; initialize a board, where positions are indexed 1-32.
@@ -226,6 +228,8 @@
 ; instantiate our game board state, initializing our
 ; board with starting pieces
 (def board (create-board))
+
+(defonce app-state (atom {:user-is-allowed-to-move true}))
 
 (println "compute-neighbor-positions: " (compute-neighbor-positions))
 
@@ -254,6 +258,7 @@
     (println "")
     (println ">> controller-unblock-user-board-input")
     (set! controller-user-board-actions-are-allowed true)
+    (swap! app-state assoc :user-is-allowed-to-move true)
     (println "== controller-user-board-actions-are-allowed: " controller-user-board-actions-are-allowed)
     (set! controller-last-click-board-pos nil)
     (println "== controller-last-click-board-pos: " controller-last-click-board-pos)))
@@ -279,6 +284,7 @@
   (println "")
   (println ">> send-api-command-board-piece-mouse-click: " pos)
   (set! controller-user-board-actions-are-allowed false)
+  (swap! app-state assoc :user-is-allowed-to-move false)
   ; (println "")
   (println "== controller-user-board-actions-are-allowed: " controller-user-board-actions-are-allowed)
   (put! board-api-commands
@@ -382,20 +388,22 @@
                             (println "8")
                             ; (send-db-command-save-movement :user source-piece-position current-position)
                             (if (move-piece source-piece-position current-position)
-                              (do (promote-piece current-position)
+                              (do (println "9" :movement-is-over)
+                                (promote-piece current-position)
                                 (send-db-command-save-movement :user :movement-is-over source-piece-position current-position (get (deref board) current-position))
                                 (send-ai-command-compute-movement)
                                 (set! source-piece-position nil))
-                              (do (promote-piece current-position)
+                              (do (println "10" :movement-continues)
+                                (promote-piece current-position)
                                 (send-db-command-save-movement :user :movement-continues source-piece-position current-position (get (deref board) current-position))
                                 (send-all-receivers-unblock-user-board-input)
                                 (set! source-piece-position current-position))))
                           (do
-                            (println "9")
+                            (println "11")
                             (send-all-receivers-unblock-user-board-input)
                           )))
                   (do
-                      (println "10")
+                      (println "12")
                       (send-all-receivers-unblock-user-board-input)))
             )
           )
@@ -404,18 +412,18 @@
 (defn test-move-piece [source-pos destination-pos]
   (let [piece-type (get (deref board) source-pos)
         source-piece-is-black? (contains? all-black-movable-pieces piece-type)
-        destination (neighbor-piece-destination-by-neighbor-pos source-pos destination-pos)
-        close-neighbor (if (some? destination) (neighbor-piece-by-destination source-pos destination))
+        direction (neighbor-piece-direction-by-neighbor-pos source-pos destination-pos)
+        close-neighbor (if (some? direction) (neighbor-piece-by-direction source-pos direction))
         close-neighbor-type (if (some? close-neighbor) (get (deref board) close-neighbor))] (do
     (println "")
     (println ">> test-move-piece: " source-pos destination-pos)
     (println "piece-type: " piece-type)
     (println "source-piece-is-black?: " source-piece-is-black?)
-    (println "destination: " destination)
+    (println "direction: " direction)
     (println "close-neighbor: " close-neighbor)
-    (if (some? destination)
+    (if (some? direction)
       (do (println "1")
-        (if (good-piece-type-destination? piece-type destination)
+        (if (good-piece-type-direction? piece-type direction)
           (do (println "2")
             (if (= destination-pos close-neighbor)
               (do (println "3")
@@ -449,14 +457,18 @@
   (let []
     ))
 
-(defn is-there-are-victim? [test-pos source-pos actor-piece-type]
+(defn is-there-are-victim? [test-pos source-pos actor-piece-type just-bool]
   (let [current-piece-color (original-piece-color actor-piece-type)
         test-piece-color (original-piece-color (get (deref board) test-pos))
-        destination (neighbor-piece-destination-by-neighbor-pos source-pos test-pos)
-        place-to-move-pos (if (some? destination) (neighbor-piece-by-destination test-pos destination))
+        direction (neighbor-piece-direction-by-neighbor-pos source-pos test-pos)
+        place-to-move-pos (if (some? direction) (neighbor-piece-by-direction test-pos direction))
         is-there-are-place-to-move? (if (some? place-to-move-pos)
             (= :empty-piece (get (deref board) place-to-move-pos))
             false)
+        potentially-positive-answer (if just-bool
+                                        is-there-are-place-to-move?
+                                        (if is-there-are-place-to-move? test-pos nil))
+        negative-answer (if just-bool false nil)
             ] (do
     (println "")
     (println ">> is-there-are-victim?: " test-pos source-pos actor-piece-type)
@@ -466,21 +478,21 @@
       (do (println "1")
         (if (not= current-piece-color test-piece-color)
           (do (println "2")
-            is-there-are-place-to-move?)
+            potentially-positive-answer)
           (do (println "3")
-            false)))
+            negative-answer)))
       (do (println "4")
-        false)))))
+        negative-answer)))))
 
 (defn can-take-victim-enemy? [test-pos actor-piece-type]
   (let [] (do
     (println "")
     (println ">> can-take-victim-enemy?: " test-pos actor-piece-type)
-    (println "1: " (set (remove nil? (compute-pos-neighbors-memo test-pos))))
-    (println "2: " (set (map #(is-there-are-victim? % test-pos actor-piece-type) (set (remove nil? (compute-pos-neighbors-memo test-pos))))))
-    (println "3: " (contains? (set (map #(is-there-are-victim? % test-pos actor-piece-type) (set (remove nil? (compute-pos-neighbors-memo test-pos))))) true))
-    (println "test-piece-color: " test-piece-color)
-    (contains? (set (map #(is-there-are-victim? % test-pos actor-piece-type) (set (remove nil? (compute-pos-neighbors-memo test-pos))))) true)
+    ; (println "1: " (set (remove nil? (compute-pos-neighbors-memo test-pos))))
+    ; (println "2: " (set (map #(is-there-are-victim? % test-pos actor-piece-type) (set (remove nil? (compute-pos-neighbors-memo test-pos))))))
+    ; (println "3: " (contains? (set (map #(is-there-are-victim? % test-pos actor-piece-type) (set (remove nil? (compute-pos-neighbors-memo test-pos))))) true))
+    ; (println "test-piece-color: " test-piece-color)
+    (contains? (set (map #(is-there-are-victim? % test-pos actor-piece-type true) (set (remove nil? (compute-pos-neighbors-memo test-pos))))) true)
 )))
 
 (defn promote-piece [pos]
@@ -494,8 +506,8 @@
         current-original-piece-color-type (if kind-of-black-piece? :black-piece :red-piece)
         promoted-piece? (contains? all-promoted-movable-pieces current-source-piece-type)
         current-original-piece-type (original-piece-type current-source-piece-type)
-        destination (neighbor-piece-destination-by-neighbor-pos source-pos destination-pos)
-        close-neighbor (neighbor-piece-by-destination source-pos destination)]
+        direction (neighbor-piece-direction-by-neighbor-pos source-pos destination-pos)
+        close-neighbor (neighbor-piece-by-direction source-pos direction)]
     (println "")
     (println ">> move-piece: " source-pos destination-pos)
     (println "current-source-piece-type: " current-source-piece-type)
@@ -570,6 +582,9 @@
 
 ; =====================================================
 
+(def original-piece-color-for-ai :red-piece)
+(def movable-piece-colors-for-ai (if (= :red-piece original-piece-color-for-ai) all-red-movable-pieces all-black-movable-pieces))
+
 ; AI
 (go (do 
     (println "")
@@ -617,8 +632,197 @@
   (let []
     (println "")
     (println ">> ai-worker-make-move" event)
+    (make-move false)
     (send-all-receivers-ai-made-movement)
     ))
+
+(defn calculate-ai-piece-to-move [captures-only]
+  (let [neighbors (calculate-neighbors)
+        list-of-black-victims (seq (calculate-real-black-victim-neighbors neighbors))
+        list-of-available-moves (seq (calculate-red-moves neighbors))] (do
+    (println "")
+    (println ">> calculate-ai-piece-to-move: ")
+    (println "neighbors: " neighbors)
+    (println "list-of-black-victims: " list-of-black-victims)
+    (println "list-of-available-moves: " list-of-available-moves)
+    (if (< 0 (count list-of-black-victims))
+      [:capture (first list-of-black-victims)]
+      (if (not captures-only)
+        (if (< 0 (count list-of-available-moves))
+          [:movement (first list-of-available-moves)])))
+    )))
+
+(defn calculate-move [captures-only]
+  (let [move-data (calculate-ai-piece-to-move captures-only)
+        move-type (if (some? move-data) (get move-data 0))
+        move-positions (if (some? move-data) (get move-data 1))
+        source-pos (if (some? move-positions) (get move-positions 0))
+        destination-variants  (if (some? move-positions) (get move-positions 1))
+        destination-pos (if (some? destination-variants) (first destination-variants))
+        ] (do
+    (println "")
+    (println ">> calculate-move: ")
+    (println "move-data: " move-data)
+    (println "move-type: " move-type)
+    (println "move-positions: " move-positions)
+    (println "source-pos: " source-pos)
+    (println "destination-variants: " destination-variants)
+    (println "destination-pos: " destination-pos)
+    (if (some? destination-pos) [source-pos destination-pos move-type])
+    )))
+
+(defn make-move [captures-only]
+  (let [move (calculate-move captures-only)
+        source-pos (if (some? move) (get move 0))
+        destination-pos (if (some? move) (get move 1))
+        move-type (if (some? move) (get move 2))] (do
+    (println "")
+    (println ">> make-move: ")
+    (println "move: " move)
+    (println "source-pos: " source-pos)
+    (println "destination-pos: " destination-pos)
+    (if (some? move) 
+      (do
+        (move-piece source-pos destination-pos)
+        (promote-piece destination-pos)
+        (send-db-command-save-movement :ai :movement-is-over source-pos destination-pos (get (deref board) source-pos))
+        (if (= :capture move-type) 
+          (if (< 0 (count (calculate-real-black-victim-neighbors (calculate-neighbors)))) (make-move true)))
+    ))
+    )))
+
+
+
+; (defn find-victims [test-pos actor-piece-type]
+;   (let [] (do
+;     (println "")
+;     (println ">> can-take-victim-enemy?: " test-pos actor-piece-type)
+;     ; (println "1: " (set (remove nil? (compute-pos-neighbors-memo test-pos))))
+;     ; (println "2: " (set (map #(is-there-are-victim? % test-pos actor-piece-type) (set (remove nil? (compute-pos-neighbors-memo test-pos))))))
+;     ; (println "3: " (contains? (set (map #(is-there-are-victim? % test-pos actor-piece-type) (set (remove nil? (compute-pos-neighbors-memo test-pos))))) true))
+;     ; (println "test-piece-color: " test-piece-color)
+;     (set (remove nil? (map #(is-there-are-victim? % test-pos actor-piece-type) (set (remove nil? (compute-pos-neighbors-memo test-pos))))))
+; )))
+
+(defn ai-piece [index]
+  (let [our-board (deref board)
+        our-piece-type (get our-board index)] (do
+    (if (contains? movable-piece-colors-for-ai our-piece-type) index nil)
+    )))
+
+(defn list-of-red-pieces []
+  (let [] (do
+    (set (remove nil? (map ai-piece (range 1 33))))
+    )))
+
+(defn calculate-neighbors []
+  (let [red-pieces (list-of-red-pieces)] (do
+    (println "")
+    (println ">> calculate-neighbors: ")
+    (println "red-pieces: " red-pieces)
+    (map (fn [pos] [pos (remove nil?(compute-pos-neighbors-memo pos))]) red-pieces)
+    )))
+
+(defn calculate-real-black-victim-neighbors [neighbors]
+  (let [] (do
+    (println "")
+    (println ">> calculate-real-black-victim-neighbors: " neighbors)
+    (remove nil? (map (fn [piece-data] (check-neighbors-for-piece piece-data)) neighbors))
+    )))
+
+(defn check-neighbors-for-piece [piece-data]
+  (let [piece-pos (get piece-data 0)
+        piece-potential-neighbors (get piece-data 1)
+        result (check-neighbors-for-piece-internal piece-data)] (do
+    (println "")
+    (println ">> check-neighbors-for-piece: " piece-data)
+    (println "piece-pos: " piece-pos)
+    (println "piece-potential-neighbors: " piece-potential-neighbors)
+    (println "result: " result)
+    (if (< 0 (count result)) [piece-pos result] nil)
+    )))
+
+(defn check-neighbors-for-piece-internal [piece-data]
+  (let [piece-pos (get piece-data 0)
+        piece-potential-neighbors (get piece-data 1)] (do
+    (println "")
+    (println ">> check-neighbors-for-piece-internal: " piece-data)
+    (println "piece-pos: " piece-pos)
+    (println "piece-potential-neighbors: " piece-potential-neighbors)
+    (remove nil? (map #(check-is-neighbor-is-victim piece-pos %) (seq piece-potential-neighbors)))
+    )))
+
+(defn check-is-neighbor-is-victim [ai-pos, neighbor-pos]
+  (let [ai-pos-type (get (deref board) ai-pos)
+        neighbor-type (get (deref board) neighbor-pos)
+        direction (neighbor-piece-direction-by-neighbor-pos ai-pos, neighbor-pos)
+        good-direction? (good-piece-type-direction? ai-pos-type direction)
+        piece-after-neighbor (neighbor-piece-by-direction neighbor-pos direction)
+        piece-after-neighbor-type (if (some? piece-after-neighbor) (get (deref board) piece-after-neighbor))
+        ] (do
+    (println "")
+    (println ">> check-is-neighbor-is-victim: " ai-pos, neighbor-pos)
+    (println "ai-pos-type: " ai-pos-type)
+    (println "neighbor-type: " neighbor-type)
+    (println "direction: " direction)
+    (println "good-direction?: " good-direction?)
+    (println "piece-after-neighbor: " piece-after-neighbor)
+    (println "piece-after-neighbor-type: " piece-after-neighbor-type)
+    (if good-direction?
+      (if (= :black-piece neighbor-type)
+        (if (some? piece-after-neighbor-type) 
+          (if (= :empty-piece piece-after-neighbor-type) piece-after-neighbor)))))))
+
+(defn calculate-red-moves [neighbors]
+  (let [] (do
+    (println "")
+    (println ">> calculate-red-moves: " neighbors)
+    (remove nil? (map (fn [piece-data] (moves-check-neighbors-for-piece piece-data)) neighbors))
+    )))
+
+(defn moves-check-neighbors-for-piece [piece-data]
+  (let [piece-pos (get piece-data 0)
+        piece-potential-neighbors (get piece-data 1)
+        result (moves-check-neighbors-for-piece-internal piece-data)] (do
+    (if (< 0 (count result)) [piece-pos result] nil)
+    )))
+
+(defn moves-check-neighbors-for-piece-internal [piece-data]
+  (let [piece-pos (get piece-data 0)
+        piece-potential-neighbors (get piece-data 1)] (do
+    (remove nil? (map #(moves-check-is-neighbor-is-good-place-to-move piece-pos %) (seq piece-potential-neighbors)))
+    )))
+
+(defn moves-check-is-neighbor-is-good-place-to-move [ai-pos, neighbor-pos]
+  (let [ai-pos-type (get (deref board) ai-pos)
+        neighbor-type (get (deref board) neighbor-pos)
+        direction (neighbor-piece-direction-by-neighbor-pos ai-pos, neighbor-pos)
+        good-direction? (good-piece-type-direction? ai-pos-type direction)
+        ] (do
+    (if good-direction?
+      (if (= :empty-piece neighbor-type) neighbor-pos)))))
+
+
+
+
+
+; (defn calculate-potential-victims []
+;   (let [red-pieces (list-of-red-pieces)] (do
+;     (map (fn [pos] {pos (compute-pos-neighbors-memo pos)}) (range 1 33)))
+;     )))
+
+; (defn calculate-captures []
+;   (let [red-pieces (list-of-red-pieces)] (do
+;     )))
+
+; ; compute neighbors for every board position
+; (defn compute-neighbor-positions []
+;   (map (fn [pos] {pos (compute-pos-neighbors-memo pos)}) (range 1 33)))
+
+
+; (defn asdf []
+;   (let [] (do
+;     )))
 
 ; ; =====================================================
 

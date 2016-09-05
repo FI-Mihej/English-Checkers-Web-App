@@ -3,7 +3,7 @@
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [cljs.core.async :refer [put! chan <!]]
-            [lg-checkers.board :refer [board board-events]]))
+            [lg-checkers.board :refer [board board-events app-state]]))
 
 (enable-console-print!)
 
@@ -81,13 +81,33 @@
       (map draw-row
            (partition 4 board)))))
 
+; given a checkerboard data structure, partition into
+; rows and draw the individual rows
+(defn game-state [data owner]
+  (println "")
+  (println ">> UI - checkerboard - partition 4 board:" (partition 4 board))
+  ; (om/component (dom/h2 nil (:text data))))
+  ; (om/component (dom/h2 nil (if (:user-is-allowed-to-move state) "Allowed" "Wait..."))))
+  (reify om/IRender
+        (render [_]
+          (dom/h1 nil (:text data))))
+)
+
 ; == Bootstrap ============================================
 (defn bootstrap-ui []
   (println ">> UI - bootstrap-ui - board" board)
   (om/root
     checkerboard ; our UI
     board        ; our game state
-    {:target (. js/document (getElementById "checkers"))}))
+    {:target (. js/document (getElementById "checkers"))})
+(om/root
+  (fn [data owner]
+    (reify om/IRender
+      (render [_]
+        (dom/h1 nil (if (:user-is-allowed-to-move data) "Make your move" "Wait...")))))
+  app-state
+  {:target (. js/document (getElementById "movement-state"))})
+    )
 
 (bootstrap-ui)
 
