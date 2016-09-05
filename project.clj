@@ -1,6 +1,6 @@
 (defproject lg-checkers "0.1.0-SNAPSHOT"
   :description "ButenkoMS Checkers"
-  :url "http://example.com/FIXME"
+  :url "https://github.com/FI-Mihej/English-Checkers-Web-App"
 
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
