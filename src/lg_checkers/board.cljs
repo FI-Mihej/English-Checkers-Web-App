@@ -184,7 +184,7 @@
 
 (defonce app-state (atom {:user-is-allowed-to-move true}))
 
-(compute-neighbor-positions)
+; (compute-neighbor-positions)
 
 ; =====================================================
 
@@ -484,23 +484,26 @@
 
 (defn ai-worker-make-move [event]
   (let []
-    (make-move false)
+    (make-move false nil)
     (send-all-receivers-ai-made-movement)
     ))
 
-(defn calculate-ai-piece-to-move [captures-only]
+(defn calculate-ai-piece-to-move [captures-only specific-piece]
   (let [neighbors (calculate-neighbors)
         list-of-black-victims (seq (calculate-real-black-victim-neighbors neighbors))
         list-of-available-moves (seq (calculate-red-moves neighbors))] (do
     (if (< 0 (count list-of-black-victims))
-      [:capture (first list-of-black-victims)]
+      (if (some? specific-piece)
+        (if (= specific-piece (get (first list-of-black-victims) 0)) [:capture (first list-of-black-victims)])
+        [:capture (first list-of-black-victims)]
+      )
       (if (not captures-only)
         (if (< 0 (count list-of-available-moves))
           [:movement (first list-of-available-moves)])))
     )))
 
-(defn calculate-move [captures-only]
-  (let [move-data (calculate-ai-piece-to-move captures-only)
+(defn calculate-move [captures-only specific-piece]
+  (let [move-data (calculate-ai-piece-to-move captures-only specific-piece)
         move-type (if (some? move-data) (get move-data 0))
         move-positions (if (some? move-data) (get move-data 1))
         source-pos (if (some? move-positions) (get move-positions 0))
@@ -510,8 +513,8 @@
     (if (some? destination-pos) [source-pos destination-pos move-type])
     )))
 
-(defn make-move [captures-only]
-  (let [move (calculate-move captures-only)
+(defn make-move [captures-only specific-piece]
+  (let [move (calculate-move captures-only specific-piece)
         source-pos (if (some? move) (get move 0))
         destination-pos (if (some? move) (get move 1))
         move-type (if (some? move) (get move 2))] (do
@@ -521,7 +524,7 @@
         (promote-piece destination-pos)
         (send-db-command-save-movement :ai :movement-is-over source-pos destination-pos (get (deref board) source-pos))
         (if (= :capture move-type) 
-          (if (< 0 (count (calculate-real-black-victim-neighbors (calculate-neighbors)))) (make-move true)))
+          (if (< 0 (count (calculate-real-black-victim-neighbors (calculate-neighbors)))) (make-move true source-pos)))
     ))
     )))
 
