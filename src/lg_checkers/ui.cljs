@@ -3,11 +3,9 @@
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [cljs.core.async :refer [put! chan <!]]
-            [lg-checkers.board :refer [board board-events app-state]]))
+            [lg-checkers.board :refer [board board-events]]))
 
 (enable-console-print!)
-
-(println "UI - start")
 
 ; == UI events ==========================================
 ; when we click a game square, we send an event
@@ -39,14 +37,9 @@
                                     (fn [e] (board-click
                                              piece-pos))}
                                  (draw-piece-function piece-pos piece-type))]
-    ; (println "")
-    ; (println ">> UI - draw-tuple - start" piece row-odd?)
-    ; (println "piece-type" piece-type)
-    ; (println "piece-pos" piece-pos)
     (if row-odd?
       [white-square green-square]
       [green-square white-square])
-    ; (println "draw-tuple - end")
   )
 )
 
@@ -56,18 +49,9 @@
 (defn draw-row [row]
   (let [curr-row (/ (first (last row)) 4)
         row-odd? (odd? curr-row)]
-    ; (println "")
-    ; (println "draw-row - start" row)
-    ; (println "row" row)
-    ; (println "(last row)" (last row))
-    ; (println "(first (last row)" (first (last row)))
-    ; (println "(/ (first (last row)) 4)" (/ (first (last row)) 4))
-    ; (println "curr-row" curr-row)
-    ; (println "row-odd?" row-odd?)
     (apply dom/tr nil
       (mapcat #(draw-tuple % row-odd?)
            row))
-    ; (println "draw-row - end")
   )
 )
 
@@ -86,8 +70,6 @@
 (defn game-state [data owner]
   (println "")
   (println ">> UI - checkerboard - partition 4 board:" (partition 4 board))
-  ; (om/component (dom/h2 nil (:text data))))
-  ; (om/component (dom/h2 nil (if (:user-is-allowed-to-move state) "Allowed" "Wait..."))))
   (reify om/IRender
         (render [_]
           (dom/h1 nil (:text data))))
@@ -100,15 +82,7 @@
     checkerboard ; our UI
     board        ; our game state
     {:target (. js/document (getElementById "checkers"))})
-  (om/root
-    (fn [data owner]
-      (reify om/IRender
-        (render [_]
-          (dom/h1 nil (if (:user-is-allowed-to-move data) "Make your move" "Wait...")))))
-    app-state
-    {:target (. js/document (getElementById "movement-state"))})
 )
 
 (bootstrap-ui)
 
-(println "UI - end")
