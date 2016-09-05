@@ -11,6 +11,6 @@ Done:
 * * Logic made with concurrent processes 
 
 Not Done:
-* * DB save/replay. Actually there is interface for this already, and whole design made to be able work with game replays. But DataStore lack documentation, I'm not familiar with it's interface, and I just need more time for an investigation how to work with DataStore. But come one: I learned completely new language (Clojure) from scratch (having really not big practical background in FunctionalProgramming) and made Web Chess in less than five days (including weekend). :)
+* * DB save/replay. Actually there is interface for this already, and whole design made to be able work with game replays. But DataStore lack documentation, I'm not familiar with it's interface, and I just need more time for an investigation how to work with DataStore. But come one: I learned completely new language (Clojure) from scratch (having really not big practical background in FunctionalProgramming) and made Web Checkers. And this is all in less than five days. :)
 
 You may play them at https://fi-mihej.github.io/English-Checkers-Web-App
