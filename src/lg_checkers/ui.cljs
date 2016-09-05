@@ -79,5 +79,3 @@
     )
 
 (bootstrap-ui)
-
-(println "UI - end")
