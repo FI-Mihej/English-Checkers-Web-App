@@ -77,7 +77,7 @@
   (println "")
   (println ">> UI - checkerboard - partition 4 board:" (partition 4 board))
   (om/component
-   (apply dom/table nil
+    (apply dom/table nil
       (map draw-row
            (partition 4 board)))))
 
