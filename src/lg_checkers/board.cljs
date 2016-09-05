@@ -189,6 +189,9 @@
 ; =====================================================
 
 ; Controller
+
+(def control-all-pieces false)
+
 (go (do
   (send-api-command-register-channel-to-receive-event board-events :api-event-unblock-user-board-input)
   (while true
@@ -214,9 +217,11 @@
 (defn controler-worker-board-clicked [event]
   (let [current-event (:command event)
         board-pos (:position event)
+        red-piece? (contains? all-red-movable-pieces (get (deref board) board-pos))
+        allowed-piece-type? (or (and (not red-piece?) (not control-all-pieces)) control-all-pieces)
         same-board-pos? (== board-pos controller-last-click-board-pos)
         new-board-pos? (not same-board-pos?)]
-    (do 
+    (if allowed-piece-type? 
       (if controller-user-board-actions-are-allowed
         (if new-board-pos?
           (do (set! controller-last-click-board-pos board-pos)
