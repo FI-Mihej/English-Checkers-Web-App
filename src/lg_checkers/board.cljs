@@ -182,7 +182,7 @@
 ; board with starting pieces
 (def board (create-board))
 
-(defonce app-state (atom {:user-is-allowed-to-move true}))
+(defonce app-state (atom {:user-is-allowed-to-move true, :captured-pieces 0}))
 
 ; (compute-neighbor-positions)
 
@@ -350,12 +350,16 @@
 
 (defn update-internal-score [piece-type original-piece-color-type delta-score]
   (let []
-    ; (update-score-for-ui original-piece-color-type (* 100 delta-score))
+    (update-score-for-ui original-piece-color-type (* 1 delta-score))
     ))
 
 (defn update-score-for-ui [original-piece-color-type delta-score]
-  (let []
-    ))
+  (let [] (do
+    (println "")
+    (println ":captured-pieces: " (get (deref app-state) :captured-pieces))
+    (swap! app-state assoc :captured-pieces (+ delta-score (get (deref app-state) :captured-pieces)))
+    (println ":captured-pieces: " (get (deref app-state) :captured-pieces))
+)))
 
 (defn is-there-are-victim? [test-pos source-pos actor-piece-type just-bool]
   (let [current-piece-color (original-piece-color actor-piece-type)

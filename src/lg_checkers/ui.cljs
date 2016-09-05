@@ -58,8 +58,6 @@
 ; given a checkerboard data structure, partition into
 ; rows and draw the individual rows
 (defn checkerboard [board owner]
-  (println "")
-  (println ">> UI - checkerboard - partition 4 board:" (partition 4 board))
   (om/component
     (apply dom/table nil
       (map draw-row
@@ -67,7 +65,6 @@
 
 ; == Bootstrap ============================================
 (defn bootstrap-ui []
-  (println ">> UI - bootstrap-ui - board" board)
   (om/root
     checkerboard ; our UI
     board        ; our game state
@@ -76,7 +73,7 @@
   (fn [data owner]
     (reify om/IRender
       (render [_]
-        (dom/h1 nil (if (:user-is-allowed-to-move data) "Make your move" "Wait...")))))
+        (dom/h1 nil (+ "Whole number of captured pieces: " (get (deref app-state) :captured-pieces))) )))
   app-state
   {:target (. js/document (getElementById "movement-state"))})
     )
