@@ -100,14 +100,14 @@
     checkerboard ; our UI
     board        ; our game state
     {:target (. js/document (getElementById "checkers"))})
-(om/root
-  (fn [data owner]
-    (reify om/IRender
-      (render [_]
-        (dom/h1 nil (if (:user-is-allowed-to-move data) "Make your move" "Wait...")))))
-  app-state
-  {:target (. js/document (getElementById "movement-state"))})
-    )
+  (om/root
+    (fn [data owner]
+      (reify om/IRender
+        (render [_]
+          (dom/h1 nil (if (:user-is-allowed-to-move data) "Make your move" "Wait...")))))
+    app-state
+    {:target (. js/document (getElementById "movement-state"))})
+)
 
 (bootstrap-ui)
 
