@@ -1,5 +1,6 @@
 English Checkers
 ====================================
+(https://fi-mihej.github.io/English-Checkers-Web-App)
 
 Done:
 * * Fixed bugs in the original "compute-pos-neighbors" function
@@ -11,3 +12,5 @@ Done:
 
 Not Done:
 * * DB save/replay. Actually there is interface for this already, and whole design made to be able work with game replays. But DataStore lack documentation, I'm not familiar with it's interface, and I just need more time for an investigation how to work with DataStore. But come one: I learned completely new language (Clojure) from scratch (having really not big practical background in FunctionalProgravving) and made Web Chess in less than five days (including weekend). :)
+
+You may play them at https://fi-mihej.github.io/English-Checkers-Web-App
