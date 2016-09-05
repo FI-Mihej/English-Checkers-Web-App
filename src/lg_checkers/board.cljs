@@ -370,13 +370,14 @@
   (let [current-piece-color (original-piece-color actor-piece-type)
         test-piece-color (original-piece-color (get (deref board) test-pos))
         direction (neighbor-piece-direction-by-neighbor-pos source-pos test-pos)
+        good-direction? (good-piece-type-direction? actor-piece-type direction)
         place-to-move-pos (if (some? direction) (neighbor-piece-by-direction test-pos direction))
         is-there-are-place-to-move? (if (some? place-to-move-pos)
             (= :empty-piece (get (deref board) place-to-move-pos))
             false)
         potentially-positive-answer (if just-bool
-                                        is-there-are-place-to-move?
-                                        (if is-there-are-place-to-move? test-pos nil))
+                                        (and good-direction? is-there-are-place-to-move?)
+                                        (if (and good-direction? is-there-are-place-to-move?) test-pos nil))
         negative-answer (if just-bool false nil)
             ] (do
     (if (not= :empty-piece test-piece-color)
