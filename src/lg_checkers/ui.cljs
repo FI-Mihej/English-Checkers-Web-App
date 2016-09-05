@@ -23,8 +23,8 @@
 (defn draw-piece-with-pos [piece-pos piece-type]
   (apply dom/div #js {:className piece-type :dangerouslySetInnerHTML #js {:__html (str piece-pos)}} nil))
 
-; (def draw-piece-function draw-piece)
-(def draw-piece-function draw-piece-with-pos)
+(def draw-piece-function draw-piece)
+; (def draw-piece-function draw-piece-with-pos)
 
 ; draws pairs of checkerboard squares within a row
 ; depending on if row is odd or even.
