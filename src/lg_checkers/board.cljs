@@ -426,23 +426,6 @@
   (send-all-receivers-unblock-user-board-input)
 )
 
-; (defn mark-piece-as [pos state]
-;   (let [current-piece-type (get (deref board) pos)] (do 
-;     (if (= :source-piece state) (do
-;         (if (= :red-piece current-piece-type) (do
-;           (update-board-position pos :red-piece-marked)
-;         ))
-;         (if (= :black-piece current-piece-type) (do
-;           (update-board-position pos :black-piece-marked)
-;         ))))
-;     (if (= :normal-piece state) (do
-;         (if (= :red-piece-marked current-piece-type) (do
-;           (update-board-position pos :red-piece)
-;         ))
-;         (if (= :black-piece-marked current-piece-type) (do
-;           (update-board-position pos :black-piece)
-;         )))))))
-
 (defn mark-piece-as [pos state]
   (let [current-piece-type (get (deref board) pos)] (do 
     (if (= :source-piece state) (do
