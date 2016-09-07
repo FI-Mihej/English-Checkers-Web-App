@@ -3,7 +3,8 @@
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [cljs.core.async :refer [put! chan <!]]
-            [lg-checkers.board :refer [board board-events app-state]]))
+            [lg-checkers.board :refer [board board-events app-state]]
+            [reagent.core :as rc]))
 
 (enable-console-print!)
 
@@ -15,72 +16,87 @@
 
 ; == Board UI Drawing ===================================
 ; draw pieces based on the piece-type
-(defn draw-piece [piece-pos piece-type]
-  (apply dom/div #js {:className piece-type} nil))
+(defn draw-piece [piece-type piece-type]
+  [:div {:class piece-type}])
 
 ; == Board UI Drawing ===================================
 ; draw pieces based on the piece-type
-(defn draw-piece-with-pos [piece-pos piece-type]
-  (apply dom/div #js {:className piece-type :dangerouslySetInnerHTML #js {:__html (str piece-pos)}} nil))
+(defn draw-piece-with-pos [piece-type piece-type]
+  [:div {:class piece-type} (str piece-pos)])
 
 (def draw-piece-function draw-piece)
 ; (def draw-piece-function draw-piece-with-pos)
 
-; draws pairs of checkerboard squares within a row
-; depending on if row is odd or even.
 (defn draw-tuple [piece row-odd?]
-	(let [piece-type (name (last piece))
-		    piece-pos (first piece)
-        white-square (dom/td #js {:className "white"})
-        green-square (dom/td #js {:className "green"
-                                  :onClick
-                                    (fn [e] (board-click
-                                             piece-pos))}
-                                 (draw-piece-function piece-pos piece-type))]
-    (if row-odd?
-      [white-square green-square]
-      [green-square white-square])
-  )
-)
+  (let [piece-type (name (last piece))
+        piece-pos (first piece)
+        white-square [:td.board.white]
+        green-square [:td.board.green {:on-click (fn [e] (board-click piece-pos))}
+                      [draw-piece-function piece-pos piece-type]]]
+    (do
+      (if row-odd?
+        [white-square green-square]
+        [green-square white-square]))))
 
-; given a row, determine if it is an odd or even row
-; and iterates over the board positions, drawing each
-; tuple of checkerboard squares
 (defn draw-row [row]
   (let [curr-row (/ (first (last row)) 4)
         row-odd? (odd? curr-row)]
-    (apply dom/tr nil
-      (mapcat #(draw-tuple % row-odd?)
-           row))
-  )
-)
+    (do
+      (into [:tr.board]
+        (mapcat #(draw-tuple % row-odd?)
+                row)))))
 
-; given a checkerboard data structure, partition into
-; rows and draw the individual rows
-(defn checkerboard [board owner]
-  (om/component
-    (apply dom/table nil
-      (map draw-row
-           (partition 4 board)))))
+(defn checkerboard []
+  [:table.board
+    (into [:tbody.board]
+      (map draw-row (partition 4 @board)))])
 
-; == Bootstrap ============================================
+== Bootstrap ============================================
 (defn bootstrap-ui []
-  (om/root
-    checkerboard ; our UI
-    board        ; our game state
-    {:target (. js/document (getElementById "checkers"))})
-(om/root
-  (fn [data owner]
-    (reify om/IRender
-      (render [_]
-        (dom/h2 nil 
-                (+ (+ "Mouse clicks: " (get (deref app-state) :number-of-mouse-clicks))
-                    (+ (+ ". Captured pieces: " (get (deref app-state) :captured-pieces))
-                        (if (get (deref app-state) :user-is-allowed-to-move) ". Make your move!" ". Please wait 2s (AI thinking very hard!) and click around...")))
-                        )
-                        )))
-  app-state
-  {:target (. js/document (getElementById "movement-state"))})
-    )
+  (rc/render-component [checkerboard]
+      (. js/document (getElementById "checkerboard"))))
 
-(bootstrap-ui)
+; =============================================================
+; == App-State ============================================
+(defn data-state []
+  (rc/render-component [app-state-renderer]
+      (. js/document (getElementById "app-state"))))
+
+(defn app-state-renderer[]
+  [:table
+    [:tbody.app-state
+      [:tr
+        [:th "Mouse clicks: " [:span.mouse-clicks (:number-of-mouse-clicks @app-state)] "."]
+        [:th "Captured pieces: " [:span.captured-pieces (:captured-pieces @app-state)] "."]
+        [:th {:class (if (:user-is-allowed-to-move @app-state) "user-is-allowed-to-move-message" "user-is-disallowed-to-move-message")}
+            (if (:user-is-allowed-to-move @app-state) 
+              "Make your move!" 
+              (str "Please wait " (/ (:ai-timeout-for-work-emulation @app-state) 1000) "s (AI thinking very hard!) and click around..."))]
+        ]]])
+
+; =============================================================
+; == App-Interface ============================================
+(defn app-interface []
+  (rc/render-component [app-interface-renderer]
+      (. js/document (getElementById "app-interface"))))
+
+(defn app-interface-renderer[]
+  [:div
+    [:label 
+      [:input {:type "checkbox"
+                :checked (if (:delay-timer-in-ai-is-on @app-state) true false)
+                :on-change (fn [e] (input-click-toggle-delay-timer-in-ai))}]
+      "Toggle delay timer in AI"]
+    [:br]
+    [:br]
+    [:button {:type "button"
+              :disabled (if (:replay-is-in-progress @app-state) true false )
+              :on-click (fn [e] (button-click-replay-recorded-game))} "Replay Recorded Game"]
+  ])
+
+(defn button-click-replay-recorded-game []
+  (put! board-events {:command :replay-recorded-game}))
+
+(defn input-click-toggle-delay-timer-in-ai []
+  (put! board-events {:command :toggle-delay-timer-in-ai}))
+

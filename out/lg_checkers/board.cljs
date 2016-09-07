@@ -1,6 +1,7 @@
 (ns lg-checkers.board
   (:require-macros [cljs.core.async.macros :refer [go]])
-  (:require [cljs.core.async :refer [put! chan <! >! timeout close!]]))
+  (:require [cljs.core.async :refer [put! chan <! >! timeout close!]]
+            [reagent.core :as rc]))
 
 (enable-console-print!)
 
@@ -169,7 +170,7 @@
 ; each position is an atom containing the symbol of the
 ; piece in it.
 (defn create-board []
-  (atom
+  (rc/atom
    (apply sorted-map
           (flatten
            (map-indexed (fn [i v] (vector (inc i) v))
@@ -182,7 +183,13 @@
 ; board with starting pieces
 (def board (create-board))
 
-(defonce app-state (atom {:user-is-allowed-to-move true, :captured-pieces 0, :number-of-mouse-clicks 0}))
+(defonce app-state (rc/atom {:user-is-allowed-to-move true 
+                              :captured-pieces 0 
+                              :number-of-mouse-clicks 0
+                              :replay-is-in-progress true
+                              :delay-timer-in-ai-is-on true
+                              :original-piece-color-for-ai :red-piece
+                              :ai-timeout-for-work-emulation 5000}))
 
 ; (compute-neighbor-positions)
 
@@ -200,12 +207,16 @@
       (if (= :board-clicked current-event)
         (controler-worker-board-clicked event))
       (if (= :api-event-unblock-user-board-input current-event)
-        (controller-unblock-user-board-input))
+        (controller-unblock-user-board-input event))
+      (if (= :replay-recorded-game current-event)
+        (replay-recorded-game event))
+      (if (= :toggle-delay-timer-in-ai current-event)
+        (toggle-delay-timer-in-ai event))
 ))))
 
 (def controller-user-board-actions-are-allowed true)
 
-(defn controller-unblock-user-board-input []
+(defn controller-unblock-user-board-input [event]
   (do 
     (set! controller-user-board-actions-are-allowed true)
     (swap! app-state assoc :user-is-allowed-to-move true)
@@ -239,6 +250,14 @@
 (defn update-number-of-mouse-clicks-for-ui []
     (swap! app-state assoc :number-of-mouse-clicks (+ 1 (get (deref app-state) :number-of-mouse-clicks))))
 
+(defn replay-recorded-game [event]
+  (swap! app-state assoc :replay-is-in-progress true))
+
+(defn toggle-delay-timer-in-ai [event]
+  (put! board-api-commands
+        {:command :toggle-delay-timer-in-ai}))
+
+
 ; =====================================================
 
 ; Logic API
@@ -253,6 +272,8 @@
           (api-worker-register-channel-to-receive-event event))
         (if (= :ai-event-ai-made-movement current-event)
           (api-worker-ai-made-movement event))
+        (if (= :toggle-delay-timer-in-ai current-event)
+          (api-toggle-delay-timer-in-ai event))
 )))))
 
 (def api-event-receivers {:api-event-unblock-user-board-input #{}})
@@ -360,11 +381,13 @@
 
 (defn update-internal-score [piece-type original-piece-color-type delta-score]
   (let []
-    (update-score-for-ui original-piece-color-type (* 1 delta-score))
+    (do
+      (swap! app-state assoc :captured-pieces (+ delta-score (get (deref app-state) :captured-pieces)))
+      (update-score-for-ui original-piece-color-type (* 100 delta-score)))
     ))
 
 (defn update-score-for-ui [original-piece-color-type delta-score]
-    (swap! app-state assoc :captured-pieces (+ delta-score (get (deref app-state) :captured-pieces))))
+    )
 
 (defn is-there-are-victim? [test-pos source-pos actor-piece-type just-bool]
   (let [current-piece-color (original-piece-color actor-piece-type)
@@ -457,12 +480,18 @@
 (defn update-board-position [pos piece]
   (swap! board assoc pos piece))
 
+(defn api-toggle-delay-timer-in-ai [event]
+  (send-ai-command-toggle-delay-timer-in-ai event))
+
+
+(defn send-ai-command-toggle-delay-timer-in-ai [event]
+  (put! ai-commands event))
+
 ; =====================================================
 ; AI
 
-(def original-piece-color-for-ai :red-piece)
-(def movable-piece-colors-for-ai (if (= :red-piece original-piece-color-for-ai) all-red-movable-pieces all-black-movable-pieces))
-(def ai-timeout-for-work-emulation 2000)
+(defn movable-piece-colors-for-ai [] 
+  (if (= :red-piece (get (deref app-state) :original-piece-color-for-ai)) all-red-movable-pieces all-black-movable-pieces))
 
 (go (do 
     (while true
@@ -470,10 +499,12 @@
             current-event (:command event)] (do
         (if (= :make-move current-event)
           (do
-            (loop [] (<! (timeout ai-timeout-for-work-emulation)))
+            (if (get (deref app-state) :delay-timer-in-ai-is-on) (loop [] (<! (timeout (get (deref app-state) :ai-timeout-for-work-emulation)))))
             (ai-worker-make-move event)))
         (if (= :register-channel-to-receive-event current-event)
           (ai-worker-register-channel-to-receive-event event))
+        (if (= :toggle-delay-timer-in-ai current-event)
+          (ai-worker-toggle-delay-timer-in-ai event))
 )))))
 
 (def ai-event-receivers {:ai-event-ai-made-movement #{}})
@@ -495,10 +526,8 @@
 (defn send-single-receiver-ai-made-movement [channel]
   (put! channel {:command :ai-event-ai-made-movement}))
 
-(defn cljs-cannot-recur! []
-  (go(loop [v nil]
-    (when-let [next-val (<! (timeout 300))]
-      (recur next-val)))))
+(defn ai-worker-toggle-delay-timer-in-ai [event]
+  (swap! app-state assoc :delay-timer-in-ai-is-on (not (get (deref app-state) :delay-timer-in-ai-is-on))))
 
 (defn ai-worker-make-move [event]
   (let []
@@ -549,7 +578,7 @@
 (defn ai-piece [index]
   (let [our-board (deref board)
         our-piece-type (get our-board index)] (do
-    (if (contains? movable-piece-colors-for-ai our-piece-type) index nil)
+    (if (contains? (movable-piece-colors-for-ai) our-piece-type) index nil)
     )))
 
 (defn list-of-red-pieces []
@@ -619,3 +648,15 @@
         ] (do
     (if good-direction?
       (if (= :empty-piece neighbor-type) neighbor-pos)))))
+
+; ; =====================================================
+
+; this concurrent process receives board command messages
+; and executes on them.  at present, the only thing it does
+; is sets the desired game position to the desired piece
+(go (do
+    (while true
+      (let [command (<! board-commands)
+            current-command (:command event)]
+        (if (= :update-board-position current-command)
+          (update-board-position (:position command) (:piece command)))))))

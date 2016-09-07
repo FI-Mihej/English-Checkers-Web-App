@@ -1,4 +1,13 @@
 (ns lg-checkers.core
-   (:require [lg-checkers.ui :refer [bootstrap-ui]]))
+   (:require [lg-checkers.ui :refer [bootstrap-ui data-state app-interface]]))
 
-(bootstrap-ui)
+(enable-console-print!)
+
+(do 
+    (println "")
+    (println "<< core - starded >>")
+    (bootstrap-ui)
+    (data-state)
+    (app-interface)
+    (println "")
+    (println "<< core - initiated >>"))
