@@ -35,13 +35,13 @@ lg_checkers.ui.draw_row = (function lg_checkers$ui$draw_row(row){
 var curr_row = (cljs.core.first.call(null,cljs.core.last.call(null,row)) / (4));
 var row_odd_QMARK_ = cljs.core.odd_QMARK_.call(null,curr_row);
 return cljs.core.apply.call(null,om.dom.tr,null,cljs.core.mapcat.call(null,((function (curr_row,row_odd_QMARK_){
-return (function (p1__12889_SHARP_){
-return lg_checkers.ui.draw_tuple.call(null,p1__12889_SHARP_,row_odd_QMARK_);
+return (function (p1__18810_SHARP_){
+return lg_checkers.ui.draw_tuple.call(null,p1__18810_SHARP_,row_odd_QMARK_);
 });})(curr_row,row_odd_QMARK_))
 ,row));
 });
 lg_checkers.ui.checkerboard = (function lg_checkers$ui$checkerboard(board,owner){
-if(typeof lg_checkers.ui.t_lg_checkers$ui12893 !== 'undefined'){
+if(typeof lg_checkers.ui.t_lg_checkers$ui18814 !== 'undefined'){
 } else {
 
 /**
@@ -50,59 +50,59 @@ if(typeof lg_checkers.ui.t_lg_checkers$ui12893 !== 'undefined'){
  * @implements {cljs.core.IMeta}
  * @implements {cljs.core.IWithMeta}
 */
-lg_checkers.ui.t_lg_checkers$ui12893 = (function (checkerboard,board,owner,meta12894){
+lg_checkers.ui.t_lg_checkers$ui18814 = (function (checkerboard,board,owner,meta18815){
 this.checkerboard = checkerboard;
 this.board = board;
 this.owner = owner;
-this.meta12894 = meta12894;
+this.meta18815 = meta18815;
 this.cljs$lang$protocol_mask$partition0$ = 393216;
 this.cljs$lang$protocol_mask$partition1$ = 0;
 })
-lg_checkers.ui.t_lg_checkers$ui12893.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = (function (_12895,meta12894__$1){
+lg_checkers.ui.t_lg_checkers$ui18814.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = (function (_18816,meta18815__$1){
 var self__ = this;
-var _12895__$1 = this;
-return (new lg_checkers.ui.t_lg_checkers$ui12893(self__.checkerboard,self__.board,self__.owner,meta12894__$1));
+var _18816__$1 = this;
+return (new lg_checkers.ui.t_lg_checkers$ui18814(self__.checkerboard,self__.board,self__.owner,meta18815__$1));
 });
 
-lg_checkers.ui.t_lg_checkers$ui12893.prototype.cljs$core$IMeta$_meta$arity$1 = (function (_12895){
+lg_checkers.ui.t_lg_checkers$ui18814.prototype.cljs$core$IMeta$_meta$arity$1 = (function (_18816){
 var self__ = this;
-var _12895__$1 = this;
-return self__.meta12894;
+var _18816__$1 = this;
+return self__.meta18815;
 });
 
-lg_checkers.ui.t_lg_checkers$ui12893.prototype.om$core$IRender$ = true;
+lg_checkers.ui.t_lg_checkers$ui18814.prototype.om$core$IRender$ = true;
 
-lg_checkers.ui.t_lg_checkers$ui12893.prototype.om$core$IRender$render$arity$1 = (function (this__12517__auto__){
+lg_checkers.ui.t_lg_checkers$ui18814.prototype.om$core$IRender$render$arity$1 = (function (this__12790__auto__){
 var self__ = this;
-var this__12517__auto____$1 = this;
+var this__12790__auto____$1 = this;
 return cljs.core.apply.call(null,om.dom.table,null,cljs.core.map.call(null,lg_checkers.ui.draw_row,cljs.core.partition.call(null,(4),self__.board)));
 });
 
-lg_checkers.ui.t_lg_checkers$ui12893.getBasis = (function (){
-return new cljs.core.PersistentVector(null, 4, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.with_meta(new cljs.core.Symbol(null,"checkerboard","checkerboard",1858212161,null),new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null,"arglists","arglists",1661989754),cljs.core.list(new cljs.core.Symbol(null,"quote","quote",1377916282,null),cljs.core.list(new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Symbol(null,"board","board",-266486106,null),new cljs.core.Symbol(null,"owner","owner",1247919588,null)], null)))], null)),new cljs.core.Symbol(null,"board","board",-266486106,null),new cljs.core.Symbol(null,"owner","owner",1247919588,null),new cljs.core.Symbol(null,"meta12894","meta12894",-1160215924,null)], null);
+lg_checkers.ui.t_lg_checkers$ui18814.getBasis = (function (){
+return new cljs.core.PersistentVector(null, 4, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.with_meta(new cljs.core.Symbol(null,"checkerboard","checkerboard",1858212161,null),new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null,"arglists","arglists",1661989754),cljs.core.list(new cljs.core.Symbol(null,"quote","quote",1377916282,null),cljs.core.list(new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Symbol(null,"board","board",-266486106,null),new cljs.core.Symbol(null,"owner","owner",1247919588,null)], null)))], null)),new cljs.core.Symbol(null,"board","board",-266486106,null),new cljs.core.Symbol(null,"owner","owner",1247919588,null),new cljs.core.Symbol(null,"meta18815","meta18815",1864021359,null)], null);
 });
 
-lg_checkers.ui.t_lg_checkers$ui12893.cljs$lang$type = true;
+lg_checkers.ui.t_lg_checkers$ui18814.cljs$lang$type = true;
 
-lg_checkers.ui.t_lg_checkers$ui12893.cljs$lang$ctorStr = "lg-checkers.ui/t_lg_checkers$ui12893";
+lg_checkers.ui.t_lg_checkers$ui18814.cljs$lang$ctorStr = "lg-checkers.ui/t_lg_checkers$ui18814";
 
-lg_checkers.ui.t_lg_checkers$ui12893.cljs$lang$ctorPrWriter = (function (this__6857__auto__,writer__6858__auto__,opt__6859__auto__){
-return cljs.core._write.call(null,writer__6858__auto__,"lg-checkers.ui/t_lg_checkers$ui12893");
+lg_checkers.ui.t_lg_checkers$ui18814.cljs$lang$ctorPrWriter = (function (this__6857__auto__,writer__6858__auto__,opt__6859__auto__){
+return cljs.core._write.call(null,writer__6858__auto__,"lg-checkers.ui/t_lg_checkers$ui18814");
 });
 
-lg_checkers.ui.__GT_t_lg_checkers$ui12893 = (function lg_checkers$ui$checkerboard_$___GT_t_lg_checkers$ui12893(checkerboard__$1,board__$1,owner__$1,meta12894){
-return (new lg_checkers.ui.t_lg_checkers$ui12893(checkerboard__$1,board__$1,owner__$1,meta12894));
+lg_checkers.ui.__GT_t_lg_checkers$ui18814 = (function lg_checkers$ui$checkerboard_$___GT_t_lg_checkers$ui18814(checkerboard__$1,board__$1,owner__$1,meta18815){
+return (new lg_checkers.ui.t_lg_checkers$ui18814(checkerboard__$1,board__$1,owner__$1,meta18815));
 });
 
 }
 
-return (new lg_checkers.ui.t_lg_checkers$ui12893(lg_checkers$ui$checkerboard,board,owner,null));
+return (new lg_checkers.ui.t_lg_checkers$ui18814(lg_checkers$ui$checkerboard,board,owner,null));
 });
 lg_checkers.ui.bootstrap_ui = (function lg_checkers$ui$bootstrap_ui(){
 om.core.root.call(null,lg_checkers.ui.checkerboard,lg_checkers.board.board,new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null,"target","target",253001721),document.getElementById("checkers")], null));
 
 return om.core.root.call(null,(function (data,owner){
-if(typeof lg_checkers.ui.t_lg_checkers$ui12899 !== 'undefined'){
+if(typeof lg_checkers.ui.t_lg_checkers$ui18820 !== 'undefined'){
 } else {
 
 /**
@@ -111,53 +111,53 @@ if(typeof lg_checkers.ui.t_lg_checkers$ui12899 !== 'undefined'){
  * @implements {cljs.core.IMeta}
  * @implements {cljs.core.IWithMeta}
 */
-lg_checkers.ui.t_lg_checkers$ui12899 = (function (bootstrap_ui,data,owner,meta12900){
+lg_checkers.ui.t_lg_checkers$ui18820 = (function (bootstrap_ui,data,owner,meta18821){
 this.bootstrap_ui = bootstrap_ui;
 this.data = data;
 this.owner = owner;
-this.meta12900 = meta12900;
+this.meta18821 = meta18821;
 this.cljs$lang$protocol_mask$partition0$ = 393216;
 this.cljs$lang$protocol_mask$partition1$ = 0;
 })
-lg_checkers.ui.t_lg_checkers$ui12899.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = (function (_12901,meta12900__$1){
+lg_checkers.ui.t_lg_checkers$ui18820.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = (function (_18822,meta18821__$1){
 var self__ = this;
-var _12901__$1 = this;
-return (new lg_checkers.ui.t_lg_checkers$ui12899(self__.bootstrap_ui,self__.data,self__.owner,meta12900__$1));
+var _18822__$1 = this;
+return (new lg_checkers.ui.t_lg_checkers$ui18820(self__.bootstrap_ui,self__.data,self__.owner,meta18821__$1));
 });
 
-lg_checkers.ui.t_lg_checkers$ui12899.prototype.cljs$core$IMeta$_meta$arity$1 = (function (_12901){
+lg_checkers.ui.t_lg_checkers$ui18820.prototype.cljs$core$IMeta$_meta$arity$1 = (function (_18822){
 var self__ = this;
-var _12901__$1 = this;
-return self__.meta12900;
+var _18822__$1 = this;
+return self__.meta18821;
 });
 
-lg_checkers.ui.t_lg_checkers$ui12899.prototype.om$core$IRender$ = true;
+lg_checkers.ui.t_lg_checkers$ui18820.prototype.om$core$IRender$ = true;
 
-lg_checkers.ui.t_lg_checkers$ui12899.prototype.om$core$IRender$render$arity$1 = (function (_){
+lg_checkers.ui.t_lg_checkers$ui18820.prototype.om$core$IRender$render$arity$1 = (function (_){
 var self__ = this;
 var ___$1 = this;
-return React.DOM.h1(null,om.util.force_children.call(null,("Whole number of captured pieces: " + cljs.core.get.call(null,cljs.core.deref.call(null,lg_checkers.board.app_state),new cljs.core.Keyword(null,"captured-pieces","captured-pieces",-1406669063)))));
+return React.DOM.h2(null,om.util.force_children.call(null,(("Mouse clicks: " + cljs.core.get.call(null,cljs.core.deref.call(null,lg_checkers.board.app_state),new cljs.core.Keyword(null,"number-of-mouse-clicks","number-of-mouse-clicks",-225975392))) + ((". Captured pieces: " + cljs.core.get.call(null,cljs.core.deref.call(null,lg_checkers.board.app_state),new cljs.core.Keyword(null,"captured-pieces","captured-pieces",-1406669063))) + (cljs.core.truth_(cljs.core.get.call(null,cljs.core.deref.call(null,lg_checkers.board.app_state),new cljs.core.Keyword(null,"user-is-allowed-to-move","user-is-allowed-to-move",1540192799)))?". Make your move!":". Please wait 2s (AI thinking very hard!) and click around...")))));
 });
 
-lg_checkers.ui.t_lg_checkers$ui12899.getBasis = (function (){
-return new cljs.core.PersistentVector(null, 4, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.with_meta(new cljs.core.Symbol(null,"bootstrap-ui","bootstrap-ui",1122157491,null),new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null,"arglists","arglists",1661989754),cljs.core.list(new cljs.core.Symbol(null,"quote","quote",1377916282,null),cljs.core.list(cljs.core.PersistentVector.EMPTY))], null)),new cljs.core.Symbol(null,"data","data",1407862150,null),new cljs.core.Symbol(null,"owner","owner",1247919588,null),new cljs.core.Symbol(null,"meta12900","meta12900",917968256,null)], null);
+lg_checkers.ui.t_lg_checkers$ui18820.getBasis = (function (){
+return new cljs.core.PersistentVector(null, 4, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.with_meta(new cljs.core.Symbol(null,"bootstrap-ui","bootstrap-ui",1122157491,null),new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null,"arglists","arglists",1661989754),cljs.core.list(new cljs.core.Symbol(null,"quote","quote",1377916282,null),cljs.core.list(cljs.core.PersistentVector.EMPTY))], null)),new cljs.core.Symbol(null,"data","data",1407862150,null),new cljs.core.Symbol(null,"owner","owner",1247919588,null),new cljs.core.Symbol(null,"meta18821","meta18821",1209019065,null)], null);
 });
 
-lg_checkers.ui.t_lg_checkers$ui12899.cljs$lang$type = true;
+lg_checkers.ui.t_lg_checkers$ui18820.cljs$lang$type = true;
 
-lg_checkers.ui.t_lg_checkers$ui12899.cljs$lang$ctorStr = "lg-checkers.ui/t_lg_checkers$ui12899";
+lg_checkers.ui.t_lg_checkers$ui18820.cljs$lang$ctorStr = "lg-checkers.ui/t_lg_checkers$ui18820";
 
-lg_checkers.ui.t_lg_checkers$ui12899.cljs$lang$ctorPrWriter = (function (this__6857__auto__,writer__6858__auto__,opt__6859__auto__){
-return cljs.core._write.call(null,writer__6858__auto__,"lg-checkers.ui/t_lg_checkers$ui12899");
+lg_checkers.ui.t_lg_checkers$ui18820.cljs$lang$ctorPrWriter = (function (this__6857__auto__,writer__6858__auto__,opt__6859__auto__){
+return cljs.core._write.call(null,writer__6858__auto__,"lg-checkers.ui/t_lg_checkers$ui18820");
 });
 
-lg_checkers.ui.__GT_t_lg_checkers$ui12899 = (function lg_checkers$ui$bootstrap_ui_$___GT_t_lg_checkers$ui12899(bootstrap_ui__$1,data__$1,owner__$1,meta12900){
-return (new lg_checkers.ui.t_lg_checkers$ui12899(bootstrap_ui__$1,data__$1,owner__$1,meta12900));
+lg_checkers.ui.__GT_t_lg_checkers$ui18820 = (function lg_checkers$ui$bootstrap_ui_$___GT_t_lg_checkers$ui18820(bootstrap_ui__$1,data__$1,owner__$1,meta18821){
+return (new lg_checkers.ui.t_lg_checkers$ui18820(bootstrap_ui__$1,data__$1,owner__$1,meta18821));
 });
 
 }
 
-return (new lg_checkers.ui.t_lg_checkers$ui12899(lg_checkers$ui$bootstrap_ui,data,owner,cljs.core.PersistentArrayMap.EMPTY));
+return (new lg_checkers.ui.t_lg_checkers$ui18820(lg_checkers$ui$bootstrap_ui,data,owner,cljs.core.PersistentArrayMap.EMPTY));
 }),lg_checkers.board.app_state,new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null,"target","target",253001721),document.getElementById("movement-state")], null));
 });
 lg_checkers.ui.bootstrap_ui.call(null);
