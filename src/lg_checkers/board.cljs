@@ -619,3 +619,15 @@
         ] (do
     (if good-direction?
       (if (= :empty-piece neighbor-type) neighbor-pos)))))
+
+; ; =====================================================
+
+; this concurrent process receives board command messages
+; and executes on them.  at present, the only thing it does
+; is sets the desired game position to the desired piece
+(go (do
+    (while true
+      (let [command (<! board-commands)
+            current-command (:command event)]
+        (if (= :update-board-position current-command)
+          (update-board-position (:position command) (:piece command)))))))
