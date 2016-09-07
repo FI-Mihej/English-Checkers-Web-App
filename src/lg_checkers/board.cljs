@@ -1,6 +1,6 @@
 (ns lg-checkers.board
   (:require-macros [cljs.core.async.macros :refer [go]])
-  (:require [cljs.core.async :refer [put! chan <!]]))
+  (:require [cljs.core.async :refer [put! chan <! >! timeout close!]]))
 
 (enable-console-print!)
 
@@ -182,7 +182,7 @@
 ; board with starting pieces
 (def board (create-board))
 
-(defonce app-state (atom {:user-is-allowed-to-move true, :captured-pieces 0}))
+(defonce app-state (atom {:user-is-allowed-to-move true, :captured-pieces 0, :number-of-mouse-clicks 0}))
 
 ; (compute-neighbor-positions)
 
@@ -221,11 +221,13 @@
         allowed-piece-type? (or (and (not red-piece?) (not control-all-pieces)) control-all-pieces)
         same-board-pos? (== board-pos controller-last-click-board-pos)
         new-board-pos? (not same-board-pos?)]
-    (if allowed-piece-type? 
-      (if controller-user-board-actions-are-allowed
-        (if new-board-pos?
-          (do (set! controller-last-click-board-pos board-pos)
-            (send-api-command-board-piece-mouse-click board-pos)))))))
+    (do
+      (update-number-of-mouse-clicks-for-ui)
+      (if allowed-piece-type? 
+        (if controller-user-board-actions-are-allowed
+          (if new-board-pos?
+            (do (set! controller-last-click-board-pos board-pos)
+              (send-api-command-board-piece-mouse-click board-pos))))))))
 
 (defn send-api-command-board-piece-mouse-click [pos]
   (set! controller-user-board-actions-are-allowed false)
@@ -233,6 +235,9 @@
   (put! board-api-commands
         {:command :board-clicked
         :position pos}))
+
+(defn update-number-of-mouse-clicks-for-ui []
+    (swap! app-state assoc :number-of-mouse-clicks (+ 1 (get (deref app-state) :number-of-mouse-clicks))))
 
 ; =====================================================
 
@@ -359,12 +364,7 @@
     ))
 
 (defn update-score-for-ui [original-piece-color-type delta-score]
-  (let [] (do
-    (println "")
-    (println ":captured-pieces: " (get (deref app-state) :captured-pieces))
-    (swap! app-state assoc :captured-pieces (+ delta-score (get (deref app-state) :captured-pieces)))
-    (println ":captured-pieces: " (get (deref app-state) :captured-pieces))
-)))
+    (swap! app-state assoc :captured-pieces (+ delta-score (get (deref app-state) :captured-pieces))))
 
 (defn is-there-are-victim? [test-pos source-pos actor-piece-type just-bool]
   (let [current-piece-color (original-piece-color actor-piece-type)
@@ -462,13 +462,16 @@
 
 (def original-piece-color-for-ai :red-piece)
 (def movable-piece-colors-for-ai (if (= :red-piece original-piece-color-for-ai) all-red-movable-pieces all-black-movable-pieces))
+(def ai-timeout-for-work-emulation 2000)
 
 (go (do 
     (while true
       (let [event (<! ai-commands)
             current-event (:command event)] (do
         (if (= :make-move current-event)
-          (ai-worker-make-move event))
+          (do
+            (loop [] (<! (timeout ai-timeout-for-work-emulation)))
+            (ai-worker-make-move event)))
         (if (= :register-channel-to-receive-event current-event)
           (ai-worker-register-channel-to-receive-event event))
 )))))
@@ -491,6 +494,11 @@
 
 (defn send-single-receiver-ai-made-movement [channel]
   (put! channel {:command :ai-event-ai-made-movement}))
+
+(defn cljs-cannot-recur! []
+  (go(loop [v nil]
+    (when-let [next-val (<! (timeout 300))]
+      (recur next-val)))))
 
 (defn ai-worker-make-move [event]
   (let []

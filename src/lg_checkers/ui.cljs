@@ -73,7 +73,12 @@
   (fn [data owner]
     (reify om/IRender
       (render [_]
-        (dom/h1 nil (+ "Whole number of captured pieces: " (get (deref app-state) :captured-pieces))) )))
+        (dom/h2 nil 
+                (+ (+ "Mouse clicks: " (get (deref app-state) :number-of-mouse-clicks))
+                    (+ (+ ". Captured pieces: " (get (deref app-state) :captured-pieces))
+                        (if (get (deref app-state) :user-is-allowed-to-move) ". Make your move!" ". Please wait 2s (AI thinking very hard!) and click around...")))
+                        )
+                        )))
   app-state
   {:target (. js/document (getElementById "movement-state"))})
     )
