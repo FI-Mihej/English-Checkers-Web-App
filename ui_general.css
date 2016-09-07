@@ -1,0 +1,24 @@
+tbody.app-state {
+	text-align: center;
+	align-content: center;
+    vertical-align: bottom;
+}
+
+th.user-is-allowed-to-move-message {
+	color: #3366ff;
+    font-weight: bold;
+}
+
+th.user-is-disallowed-to-move-message {
+	color: grey;
+    font-weight: bold;
+}
+
+span.mouse-clicks {
+    color: red;
+    font-size: 20px;
+}
+span.captured-pieces {
+    color: palevioletred;
+    font-size: 20px;
+}

@@ -1,12 +1,12 @@
-table {
+table.board {
 	border: 1px solid black;
 }
 
-tr {
+tr.board {
 	background: solid black;
 }
 
-td {
+td.board {
 	border: 1px solid black;
 	width: 60px;
 	height: 64px;
