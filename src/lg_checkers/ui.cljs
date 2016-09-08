@@ -63,16 +63,21 @@
       (. js/document (getElementById "app-state"))))
 
 (defn app-state-renderer[]
-  [:table
-    [:tbody.app-state
-      [:tr
-        [:th "Mouse clicks: " [:span.mouse-clicks (:number-of-mouse-clicks @app-state)] "."]
-        [:th "Captured pieces: " [:span.captured-pieces (:captured-pieces @app-state)] "."]
-        [:th {:class (if (:user-is-allowed-to-move @app-state) "user-is-allowed-to-move-message" "user-is-disallowed-to-move-message")}
-            (if (:user-is-allowed-to-move @app-state) 
-              "Make your move!" 
-              (str "Please wait " (/ (:ai-timeout-for-work-emulation @app-state) 1000) "s (AI thinking very hard!) and click around..."))]
-        ]]])
+  [:div
+    [:table
+      [:tbody.app-state
+        [:tr
+          [:th "Mouse clicks: " [:span.mouse-clicks (:number-of-mouse-clicks @app-state)] "."]
+          [:th "Captured pieces: " [:span.captured-pieces (:captured-pieces @app-state)] "."]
+          ]]]
+    [:table
+      [:tbody.app-state
+        [:tr
+          [:th {:class (if (:user-is-allowed-to-move @app-state) "user-is-allowed-to-move-message" "user-is-disallowed-to-move-message")}
+              (if (:user-is-allowed-to-move @app-state) 
+                "Make your move!" 
+                (str "Please wait " (/ (:ai-timeout-for-work-emulation @app-state) 1000) "s (AI thinking very hard!) and click around..."))]]]]]
+        )
 
 ; =============================================================
 ; == App-Interface ============================================
