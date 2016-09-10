@@ -3,11 +3,6 @@
 
 (enable-console-print!)
 
-(do 
-    (println "")
-    (println "<< core - starded >>")
-    (bootstrap-ui)
-    (data-state)
-    (app-interface)
-    (println "")
-    (println "<< core - initiated >>"))
+(bootstrap-ui)
+(data-state)
+(app-interface)
