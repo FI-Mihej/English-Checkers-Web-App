@@ -14,6 +14,7 @@
                  [sablono "0.7.3"]
                  [org.omcljs/om "1.0.0-alpha40"]
                  [datascript "0.15.2"]
+                 [datascript-transit "0.2.2"]
                  [reagent "0.6.0-rc"]]
 
   :plugins [[lein-cljsbuild "1.1.3" :exclusions [[org.clojure/clojure]]]]

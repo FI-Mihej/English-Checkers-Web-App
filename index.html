@@ -1,25 +1,59 @@
 <html>
-    <link rel="stylesheet" href="checkers.css">
-    <link rel="stylesheet" href="toggle_switch.css">
-    <link rel="stylesheet" href="ui_general.css">
+    <head>
+        <title>English Checkers</title>
+        <!--<link rel="stylesheet" href="reset.css">-->
+        <!--<link rel="stylesheet" type="text/css" href="https://yui-s.yahooapis.com/2.9.0/build/reset/reset-min.css">-->
+        <link rel="stylesheet" href="checkers.css">
+        <link rel="stylesheet" href="ui_general.css">
+    </head>
     <body>
-        <h1>English Checkers made with ClojureScript <br>
+        <h1 class="align-h-center-w-bottom">English Checkers made with ClojureScript <br>
             and React</h1>
-        <a href="https://github.com/FI-Mihej/English-Checkers-Web-App">Source Code On GitHub</a>
-        <ul>
-            <li>Make your move and click around to increment "Mouse clicks" <br> 
-                counter <b>while</b> AI is thinking about it's movement (there is <br>
-                a timer for 2 seconds delay made for "hard thinking" process emulation).</li>
-            <li>Only green squares are "clickable"</li>
-            <li>You can check or uncheck your piece by clicking on it.</li>
-            <li>You can do serial capture moves without re-checking your piece.</li>
-            <li>Check other English Checkers rules on <a href="https://en.wikipedia.org/wiki/English_draughts">Wikipedia</a>.</li>
-        </ul>
-        <br>
-        <div id="app-interface"></div>
-        <div id="app-state"></div>
-        <div id="checkerboard"></div>
-        <div id="footer"></div>
+        <a href="https://github.com/FI-Mihej/English-Checkers-Web-App"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/c6625ac1f3ee0a12250227cf83ce904423abf351/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f677261795f3664366436642e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_gray_6d6d6d.png"></a>
+        <div class="a-view-port">
+            <div id="rules-and-tips" class="center-h-on-a-view-port">
+                <!--<h3><a href="https://github.com/FI-Mihej/English-Checkers-Web-App">Source Code On GitHub</a></h3>-->
+                <h2>Tips:</h2>
+                <ul>
+                    <li><b>Capturing is always mandatory!</b></li>
+                    <li>You can check or uncheck your piece <b>by clicking</b> on it.</li>
+                    <li>You can do serial capturing moves without re-checking your piece.</li>
+                    <li>Only green squares are "clickable".</li>
+                    <li>If you want to check out <b>concurency</b> - just turn on AI Delay Timer <br>
+                        ("Toggle delay timer in AI") and then make your move and click around to <br>
+                        increment "Mouse clicks" counter <b>while</b> AI is still thinking about <br>
+                        it's movement (there is a timer for 5 seconds delay made for "hard <br>
+                        thinking" process emulation).</li>
+                </ul>
+                <h2>Rules:</h2>
+                <ul>
+                    <li>Capturing (jumping) is always mandatory: even <br>
+                    if doing so results in disadvantage for the jumping player.</li>
+                    <li>A piece which in the current move has become <br>
+                    a king can then in the same move go on to capture other pieces.</li>
+                    <li>Enemy pieces are captured by jumping over them.</li>
+                    <li>The pieces move and capture diagonally forward.</li>
+                    <li>When they reach the opposite end of the board <br>
+                    they will be crowned.</li>
+                    <li>Crowned pieces may thereafter move and capture <br>
+                    both backward and forward.</li>
+                    <li>Multiple jumps are possible, if after one jump, <br>
+                    another piece is immediately eligible to be jumped—even <br>
+                    if that jump is in a different diagonal direction.</li>
+                    <li>Only the green squares of the checkered board are used.</li>
+                    <li>Check other English Checkers rules on <a href="https://en.wikipedia.org/wiki/English_draughts">Wikipedia</a>.</li>
+                </ul>
+            </div>
+            <div id="app" class="center-h-on-a-view-port"></div>
+                <br>
+                <div id="app-ui">
+                    <div id="app-interface"></div>
+                    <div id="app-state"></div>
+                </div>
+                <div id="checkerboard"></div>
+            </div>
+        </div>
+        <div id="footer" class="heigth100percent"></div>
         <script src="http://fb.me/react-0.11.1.js"></script>
         <script src="out/goog/base.js" type="text/javascript"></script>
         <script src="lg_checkers.js" type="text/javascript"></script>
