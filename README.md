@@ -8,6 +8,16 @@ English Checkers Web Game. Made with ClojureScript and React.
 * You can check or uncheck your piece by clicking on it.
 * You can do serial capture moves without re-checking your piece.
 
+# Deploy:
+* Build and automaticaly run in the default browser:
+    * `lein figwheel`
+* Just build: 
+    * `lein cljsbuild once`
+    * `lein cljsbuild auto` - with auto rebuild on source change
+* Clean:
+    * `lein clean`
+
+
 # Tasks:
 Original task can be seen [here](https://github.com/FI-Mihej/English-Checkers-Web-App/blob/master/README-ORIGINAL-TASK.md)
 
@@ -20,7 +30,7 @@ Original task can be seen [here](https://github.com/FI-Mihej/English-Checkers-We
 - [x] Swiched from Om to Reagent
 - [x] Made some UI
 - [x] Save moves to DB and implement Game Replay.
-- [ ] Result should compiles cleanly using `lein clean; lein cljsbuild`, and executes in a browser.
+- [x] Result should compiles cleanly using `lein clean; lein cljsbuild`, and executes in a browser.
 
 # Links:
 You may play them at [English Checkers Web App](https://fi-mihej.github.io/English-Checkers-Web-App)
