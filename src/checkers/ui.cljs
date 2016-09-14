@@ -1,13 +1,13 @@
-(ns lg-checkers.ui
+(ns checkers.ui
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [cljs.core.async :refer [put! chan <!]]
-            [lg-checkers.board :refer [ board app-state
-                                        send-controller-command-board-click
-                                        send-controller-command-replay-recorded-game
-                                        send-controller-command-toggle-delay-timer-in-ai
-                                        send-controller-command-toggle-ai]]
+            [checkers.board :refer [board app-state
+                                    send-controller-command-board-click
+                                    send-controller-command-replay-recorded-game
+                                    send-controller-command-toggle-delay-timer-in-ai
+                                    send-controller-command-toggle-ai]]
             [reagent.core :as rc]))
 
 (enable-console-print!)

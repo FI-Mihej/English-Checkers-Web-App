@@ -1,4 +1,4 @@
-(defproject lg-checkers "0.1.0-SNAPSHOT"
+(defproject checkers "0.1.0-SNAPSHOT"
   :description "ButenkoMS - English Checkers"
   :url "https://github.com/FI-Mihej/English-Checkers-Web-App"
 
@@ -34,7 +34,7 @@
                 :figwheel { ;; :on-jsload "om-tut.core/on-js-reload"
                             :open-urls ["http://localhost:3449/index.html"]}
 
-                :compiler {:main lg-checkers.core
+                :compiler {:main checkers.core
                            :asset-path "js/compiled/out"
                            :output-to "resources/public/js/compiled/checkers.js"
                            :output-dir "resources/public/js/compiled/out"
@@ -48,7 +48,7 @@
                {:id "min"
                 :source-paths ["src"]
                 :compiler {:output-to "resources/public/js/compiled/checkers.js"
-                           :main lg-checkers.core
+                           :main checkers.core
                            :optimizations :advanced
                            :pretty-print false}}]}
 
