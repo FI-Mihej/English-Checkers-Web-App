@@ -1,1 +1,0 @@
-["^ ","~:name","~$lg-checkers.core","~:doc",null,"~:excludes",["~#set",[]],"~:use-macros",null,"~:require-macros",null,"~:uses",["^ ","~$bootstrap-ui","~$lg-checkers.ui","~$data-state","^9","~$app-interface","^9"],"~:requires",["^ ","^9","^9"],"~:imports",null]
