@@ -1,4 +1,4 @@
-English Checkers Web Game. Made with ClojureScript and React.
+English Checkers Web Game.
 ====================================
 (https://fi-mihej.github.io/English-Checkers-Web-App)
 
