@@ -1,4 +1,4 @@
-The Challenge: Lookingglass Checkers
+The Challenge: English Checkers
 ====================================
 
 The challenge is to implement the game logic for a provided checkerboard board state and UI:

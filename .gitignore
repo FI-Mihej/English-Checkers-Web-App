@@ -8,4 +8,4 @@ pom.xml
 .lein-deps-sum
 .lein-repl-history
 .lein-plugins/
-lg_checkers.js
+checkers.js

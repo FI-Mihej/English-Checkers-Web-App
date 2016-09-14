@@ -36,7 +36,7 @@
 
                 :compiler {:main lg-checkers.core
                            :asset-path "js/compiled/out"
-                           :output-to "resources/public/js/compiled/lg_checkers.js"
+                           :output-to "resources/public/js/compiled/checkers.js"
                            :output-dir "resources/public/js/compiled/out"
                            :source-map-timestamp true
                            ;; To console.log CLJS data-structures make sure you enable devtools in Chrome
@@ -47,7 +47,7 @@
                ;; lein cljsbuild once min
                {:id "min"
                 :source-paths ["src"]
-                :compiler {:output-to "resources/public/js/compiled/lg_checkers.js"
+                :compiler {:output-to "resources/public/js/compiled/checkers.js"
                            :main lg-checkers.core
                            :optimizations :advanced
                            :pretty-print false}}]}
