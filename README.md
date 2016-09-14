@@ -26,7 +26,7 @@ Original task can be seen [here](https://github.com/FI-Mihej/English-Checkers-We
 - [x] Correct AI for Bot Enemy (not brilliant, but able to play by the rules)
 - [x] Pieces captures counter; mouse clicks counter; game state indicator; emulation of hardly thinking AI process
 - [x] Logic made with concurrent processes 
-- [x] Fixed bugs in the original "compute-pos-neighbors" function
+- [x] Fixed bugs in the original function that calculates a given position neighbors 
 - [x] Swiched from Om to Reagent
 - [x] Made some UI
 - [x] Save moves to DB and implement Game Replay.
