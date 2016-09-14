@@ -165,7 +165,7 @@
         (get promotion-piece-type-by-piece-color piece-type))))
 
 ; given a board position, return the position of neighbors
-(defn compute-pos-neighbors [pos]
+(defn compute-piece-pos-neighbors [pos]
   (let [curr-row (row-of-the-piece-position pos)
         row-odd? (odd? curr-row)
         row-even? (not row-odd?)
@@ -201,26 +201,27 @@
                 down-right])
           [nil nil])])))
 
-(def compute-pos-neighbors-memo (memoize compute-pos-neighbors))
+(def compute-piece-pos-neighbors-memo (memoize compute-piece-pos-neighbors))
 
-; compute neighbors for every board position
-(defn compute-neighbor-positions []
-  (map (fn [pos] {pos (compute-pos-neighbors-memo pos)})
+; compute all neighbors for 
+; every board position
+(defn compute-all-neighbors-positions []
+  (map (fn [pos] {pos (compute-piece-pos-neighbors-memo pos)})
        (range 1 33)))
 
 (defn neighbor-piece-by-direction [pos direction]
   (let []
-    (get (to-array (compute-pos-neighbors-memo pos)) (get piece-neighbor-direction-number-by-direction direction))
+    (get (to-array (compute-piece-pos-neighbors-memo pos)) (get piece-neighbor-direction-number-by-direction direction))
     ))
 
 (defn neighbor-piece-direction-by-neighbor-pos [pos neighbor-pos]
-  (let [close-neighbor? (contains? (set (compute-pos-neighbors-memo pos)) neighbor-pos)
+  (let [close-neighbor? (contains? (set (compute-piece-pos-neighbors-memo pos)) neighbor-pos)
         up-left-neighbor (if (not close-neighbor?) (neighbor-piece-by-direction pos :up-left))
         up-right-neighbor (if (not close-neighbor?) (neighbor-piece-by-direction pos :up-right))
         down-left-neighbor (if (not close-neighbor?) (neighbor-piece-by-direction pos :down-left))
         down-right-neighbor (if (not close-neighbor?) (neighbor-piece-by-direction pos :down-right))]
     (if close-neighbor?
-      (get piece-neighbor-direction-by-number (.indexOf (to-array (compute-pos-neighbors-memo pos)) neighbor-pos))
+      (get piece-neighbor-direction-by-number (.indexOf (to-array (compute-piece-pos-neighbors-memo pos)) neighbor-pos))
       (if (and (some? up-left-neighbor) (= neighbor-pos (neighbor-piece-by-direction up-left-neighbor :up-left))) :up-left
         (if (and (some? up-right-neighbor) (= neighbor-pos (neighbor-piece-by-direction up-right-neighbor :up-right))) :up-right
           (if (and (some? down-left-neighbor) (= neighbor-pos (neighbor-piece-by-direction down-left-neighbor :down-left))) :down-left
@@ -364,7 +365,7 @@
 
 (defn can-take-victim-enemy? [test-pos actor-piece-type]
   (let [] (do
-    (contains? (set (map #(is-there-are-victim? % test-pos actor-piece-type true) (set (remove nil? (compute-pos-neighbors-memo test-pos))))) true))))
+    (contains? (set (map #(is-there-are-victim? % test-pos actor-piece-type true) (set (remove nil? (compute-piece-pos-neighbors-memo test-pos))))) true))))
 
 (defn promote-piece [pos]
   (let [piece-type (get (deref board) pos)
@@ -424,7 +425,7 @@
 
 (defn calculate-neighbors [current-piece-color]
   (let [actors-pieces (list-of-current-actors-pieces current-piece-color)]
-    (map (fn [pos] [pos (remove nil?(compute-pos-neighbors-memo pos))]) actors-pieces)))
+    (map (fn [pos] [pos (remove nil?(compute-piece-pos-neighbors-memo pos))]) actors-pieces)))
 
 ; =====================================================
 ; === Victims ==========================================
